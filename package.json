@@ -1,0 +1,40 @@
+{
+  "name": "after-axios",
+  "version": "1.0.0",
+  "description": "a series of handlers after the axios request",
+  "main": "index.js",
+  "scripts": {
+    "build": "gulp",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/terryz95/after-axios.git"
+  },
+  "keywords": [
+    "axios"
+  ],
+  "files": [
+    "dist"
+  ],
+  "author": "Terry Zhang",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/terryz95/after-axios/issues"
+  },
+  "homepage": "https://github.com/terryz95/after-axios#readme",
+  "dependencies": {
+    "axios": "^0.20.0",
+    "http-rsc": "^1.0.0",
+    "lodash-es": "^4.17.15"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.11.6",
+    "@babel/preset-env": "^7.11.5",
+    "gulp": "^4.0.2",
+    "gulp-babel": "^8.0.0",
+    "gulp-rename": "^2.0.0",
+    "gulp-uglify": "^3.0.2",
+    "gulp-uglifyjs": "^0.6.2"
+  }
+}

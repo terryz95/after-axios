@@ -1,0 +1,142 @@
+import axios from 'axios'
+import { isPlainObject, isNumber } from 'lodash-es'
+import { httpRscMap } from 'http-rsc'
+
+/**
+ * @description: axios packaging
+ * @param {Object} validator - http & business validator
+ * @param {HttpValidator} validator.http - http validator
+ * @param {BussinessValidator} validator.business - business validator
+ * @param {Object} axiosOptions - AxiosRequestConfig
+ * @return {Object} AxiosInstance
+ */
+export default function (validator, axiosOptions = {}) {
+  let http = null
+  let business = null
+  if (isPlainObject(validator)) {
+    http = validator.http
+    business = validator.business
+  }
+
+  axios.interceptors.request.use(config => {
+    return config
+  }, error => {
+    return Promise.reject(error)
+  })
+  
+  axios.interceptors.response.use(res => {
+    business && business(res.data)
+    return Promise.resolve(res)
+  }, error => {
+    const { response } = error
+    if (response && isNumber(response.status)) {
+      http && http(response.status)
+      return Promise.reject({ code: response.status, msg: httpRscMap.get(response.status) })
+    }
+    return Promise.reject({
+      code: -1,
+      msg: 'Network Error. Please try again later',
+    })
+  })
+
+  return axios.create(Object.assign({}, {
+    timeout: 5000,
+    headers: {
+      'Content-Type': 'application/json; charset=UTF-8',
+    },
+  }, axiosOptions))
+}
+
+/**
+ * @description: axiosResHandler
+ * @param {Promise} promise - the promise from the axios request
+ * @return {Promise} 
+ */
+export const axiosResHandler = promise => promise.then(res => res.data).catch(error => Promise.reject(error))
+
+/**
+ * @description: A handler to deal with the promise result from the axiosResHandler
+ * @param {Promise<BussinessType>} asyncData - the promise result from the axiosResHandler
+ * @param {codeFromRes} codeFromRes - method which can get the bussiness code from the res
+ * @param {dataFromRes} dataFromRes - method which can get the bussiness data from the res
+ * @param {onSuccess | false} onSuccess - callback when bussiness code is right
+ * @param {onBusinessError | false} onBusinessError - callback when bussiness code is wrong (if all actions were done in the axios res interceptors, u can do nothing here)
+ * @param {onHTTPError | false} onHTTPError - callback when http error or syntax error is catched (if all actions were done in the axios res interceptors, u can do nothing here)
+ * @param {Function} [onLoadingStart] - loading before asyncData
+ * @param {Function} [onLoadingEnd] - loading after asyncData
+ * @return {Promise}
+ */
+export async function asyncDataHandler(
+  asyncData,
+  codeFromRes,
+  dataFromRes,
+  onSuccess,
+  onBusinessError,
+  onHTTPError,
+  onLoadingStart,
+  onLoadingEnd,
+) {
+  onLoadingStart && onLoadingStart()
+  try {
+    const result = await asyncData
+    onLoadingEnd && onLoadingEnd()
+    if (codeFromRes(result)) {
+      const data = dataFromRes(result) || null
+      if (onSuccess) {
+        onSuccess(data)
+      }
+      return Promise.resolve(data)
+    } else {
+      // business error: it means http res status code is ok but business check is not passed
+      onBusinessError && onBusinessError(result)
+    }
+  } catch (e) {
+    // http error catch or syntax error catch
+    // maybe { code: number, msg: string } or new Error()
+    onHTTPError && onHTTPError(e) 
+    onLoadingEnd && onLoadingEnd()
+  }
+  return Promise.resolve()
+}
+
+/**
+ * @callback HttpValidator
+ * @param {number} status - response status
+ * @return {void} 
+ */
+
+/**
+ * @callback BussinessValidator
+ * @param {*} data - response data
+ * @return {void} 
+ */
+
+/**
+ * @callback codeFromRes
+ * @param {Object} result - result from the axiosResHandler
+ * @return {string | number} bussiness code
+ */
+
+/**
+ * @callback dataFromRes
+ * @param {Object} result - result from the axiosResHandler
+ * @return {*} bussiness data
+ */
+
+/**
+ * @callback onSuccess
+ * @param {*} data - bussiness data
+ * @return {void}
+ */
+
+/**
+ * @callback onBusinessError
+ * @param {Object} result - result from the axiosResHandler
+ * @return {void}
+ */
+
+/**
+ * @callback onHTTPError
+ * @param {Object | Error} e - error
+ * @return {void}
+ */
