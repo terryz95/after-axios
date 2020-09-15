@@ -2,9 +2,9 @@
  * @jest-environment node
  */
 
-import createMyAxios, { axiosResHandler, asyncDataHandler } from '../src'
+import { createAxios, axiosResHandler } from '../src'
 const { api } = require('./constants')
-const myAxios = createMyAxios()
+const myAxios = createAxios()
 test('myAxios resolve', () => {
   return myAxios.get(api).then(data => {
     expect(data.statusText).toBe('OK')
@@ -28,7 +28,7 @@ test('myAxios reject by axiosResHandler which has not response', () => {
 test('myAxios2 bussiness check', () => {
   let isHttpChecked = false
   let isBussinessChecked = false
-  const myAxios2 = createMyAxios({
+  const myAxios2 = createAxios({
     http: ({status}) => {
       switch (status) {
         case 404:
@@ -50,7 +50,7 @@ test('myAxios2 bussiness check', () => {
 test('myAxios2 http check', () => {
   let isHttpChecked = false
   let isBussinessChecked = false
-  const myAxios2 = createMyAxios({
+  const myAxios2 = createAxios({
     http: ({status}) => {
       switch (status) {
         case 404:
