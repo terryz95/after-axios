@@ -2,7 +2,7 @@
   "name": "after-axios",
   "version": "1.0.0",
   "description": "a series of handlers after the axios request",
-  "main": "index.js",
+  "main": "dist/after-axios.js",
   "scripts": {
     "build": "gulp",
     "test": "jest"

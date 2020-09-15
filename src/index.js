@@ -20,9 +20,6 @@ export default function (validator, axiosOptions = {}) {
 
   let instance = axios.create(Object.assign({}, {
     timeout: 5000,
-    headers: {
-      'Content-Type': 'application/json; charset=UTF-8',
-    },
   }, axiosOptions))
 
   instance.interceptors.request.use(config => {
