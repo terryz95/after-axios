@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="https://unpkg.com/@primer/css/dist/primer.css" rel="stylesheet" />
+  <title>Document</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+    }
+
+    html,
+    body {
+      height: 100%;
+      min-width: 768px;
+    }
+
+    body {
+      background-color: #f6f8fa;
+    }
+
+    main {
+      width: 80%;
+      margin: 0 auto;
+      text-align: center;
+    }
+
+    h2.title {
+      padding: 24px 0;
+      border-bottom: 1px solid #e1e4e8;
+    }
+
+    .Box {
+      text-align: left;
+    }
+
+    .demo-container {
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+    }
+  </style>
+</head>
+
+<body>
+  <main>
+    <h2 class="title">AfterAxios - 配置化处理axios后续的操作</h2>
+    <br />
+    <section class="demo-container">
+      <div class="Box">
+        <div class="Box-header">
+          <h4>示例</h4>
+        </div>
+        <div class="Box-body">
+          <button id="request1" type="button" class="btn btn-primary mr-8">成功请求,并成功</button>
+          <button id="request2" type="button" class="btn btn-primary mr-8">成功请求,但业务层报错</button>
+          <button id="request3" type="button" class="btn btn-primary">失败请求,HTTP层报错</button>
+        </div>
+        <div class="Box-footer">
+          <p id="loading"></p>
+          <p id="result"></p>
+        </div>
+      </div>
+    </section>
+  </main>
+  <script src="https://cdn.jsdelivr.net/npm/lodash@4.17.20/lodash.min.js"></script>
+  <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+  <script src="./after-axios.umd.js"></script>
+  <script>
+    const { asyncDataHandler, axiosResHandler, createAxios } = window.AfterAxios
+    const request = createAxios()
+
+    const $result = document.querySelector('#result')
+    const $loading = document.querySelector('#loading')
+
+    const successFromRes = result => result.answer !== undefined
+    const failFromRes = result => result.answer === undefined
+    const dataFromRes = result => result
+    const onSuccess = data => {
+      $result.innerHTML = JSON.stringify(data)
+    }
+    const onBusinessError = result => {
+      $result.innerHTML = '这里调用了业务层的callback，业务数据是: ' + JSON.stringify(result)
+    }
+    const onHTTPError = error => {
+      $result.innerHTML = '这里调用了HTTP层的callback，也有可能拦截到语法错误，当前错误是: ' + (error instanceof Error ? error.toString() : JSON.stringify(error))
+    }
+    const onLoadingStart = () => {
+      $loading.innerHTML = 'Loading Start at ' + Date.now()
+    }
+    const onLoadingEnd = () => {
+      $loading.innerHTML = 'Loading End at ' + Date.now()
+    }
+
+    document.querySelector('#request1').addEventListener('click', function() {
+      const promise = axiosResHandler(request.get('https://yesno.wtf/api'))
+      asyncDataHandler(promise, successFromRes, dataFromRes, onSuccess, onBusinessError, onHTTPError, onLoadingStart, onLoadingEnd)
+    })
+    document.querySelector('#request2').addEventListener('click', function() {
+      const promise = axiosResHandler(request.get('https://yesno.wtf/api'))
+      asyncDataHandler(promise, failFromRes, dataFromRes, onSuccess, onBusinessError, onHTTPError, onLoadingStart, onLoadingEnd)
+    })
+    document.querySelector('#request3').addEventListener('click', function() {
+      const promise = axiosResHandler(request.get('https://yesno.wtf/api/error'))
+      asyncDataHandler(promise, successFromRes, dataFromRes, onSuccess, onBusinessError, onHTTPError, onLoadingStart, onLoadingEnd)
+    })
+  </script>
+</body>
+
+</html>
