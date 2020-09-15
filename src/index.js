@@ -1,5 +1,5 @@
 import axios from 'axios'
-import { isPlainObject, isNumber, isFunction } from 'lodash-es'
+import _ from 'lodash'
 import { httpRscMap } from 'http-rsc'
 
 /**
@@ -10,10 +10,10 @@ import { httpRscMap } from 'http-rsc'
  * @param {Object} axiosOptions - AxiosRequestConfig
  * @return {Object} AxiosInstance
  */
-export default function (validator, axiosOptions = {}) {
+export function createAxios(validator, axiosOptions = {}) {
   let http = null
   let business = null
-  if (isPlainObject(validator)) {
+  if (_.isPlainObject(validator)) {
     http = validator.http
     business = validator.business
   }
@@ -29,12 +29,12 @@ export default function (validator, axiosOptions = {}) {
   })
   
   instance.interceptors.response.use(res => {
-    isFunction(business) && business(res.data)
+    _.isFunction(business) && business(res.data)
     return Promise.resolve(res)
   }, error => {
     const { response } = error
-    if (response && isNumber(response.status)) {
-      isFunction(http) && http(response)
+    if (response && _.isNumber(response.status)) {
+      _.isFunction(http) && http(response)
       return Promise.reject({ code: response.status, msg: httpRscMap.get(response.status) })
     }
     return Promise.reject({
@@ -75,29 +75,29 @@ export async function asyncDataHandler(
   onLoadingStart,
   onLoadingEnd,
 ) {
-  if (!isFunction(codeFromRes) || !isFunction(dataFromRes) ) {
+  if (!_.isFunction(codeFromRes) || !_.isFunction(dataFromRes) ) {
     console.warn(`Arguments 'codeFromRes' and 'dataFromRes' must be functions`)
     return Promise.resolve()
   }
-  isFunction(onLoadingStart) && onLoadingStart()
+  _.isFunction(onLoadingStart) && onLoadingStart()
   try {
     const result = await asyncData
-    isFunction(onLoadingEnd) && onLoadingEnd()
-    if (isFunction(codeFromRes) && codeFromRes(result)) {
-      const data = (isFunction(dataFromRes) && dataFromRes(result)) || null
-      if (onSuccess && isFunction(onSuccess)) {
+    _.isFunction(onLoadingEnd) && onLoadingEnd()
+    if (_.isFunction(codeFromRes) && codeFromRes(result)) {
+      const data = (_.isFunction(dataFromRes) && dataFromRes(result)) || null
+      if (onSuccess && _.isFunction(onSuccess)) {
         onSuccess(data)
       }
       return Promise.resolve(data)
     } else {
       // business error: it means http res status code is ok but business check is not passed
-      onBusinessError && isFunction(onBusinessError) && onBusinessError(result)
+      onBusinessError && _.isFunction(onBusinessError) && onBusinessError(result)
     }
   } catch (e) {
-    isFunction(onLoadingEnd) && onLoadingEnd()
+    _.isFunction(onLoadingEnd) && onLoadingEnd()
     // http error catch or syntax error catch
     // maybe { code: number, msg: string } or new Error()
-    onHTTPError && isFunction(onHTTPError) && onHTTPError(e) 
+    onHTTPError && _.isFunction(onHTTPError) && onHTTPError(e) 
   }
   return Promise.resolve()
 }
