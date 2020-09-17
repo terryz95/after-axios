@@ -4,7 +4,7 @@
 
 import { createAxios, axiosResHandler } from '../src'
 const { api } = require('./constants')
-const myAxios = createAxios()
+const myAxios = createAxios({}, {timeout: 10000})
 test('myAxios resolve', () => {
   return myAxios.get(api).then(data => {
     expect(data.statusText).toBe('OK')
