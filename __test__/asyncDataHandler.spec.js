@@ -11,10 +11,10 @@ test('full args and resolve', () => {
   const dataFromRes = result => result
   const onSuccess = data => console.log('data is', data)
   const onBusinessError = result => console.log('result is', result)
-  const onHTTPError = error => console.log('error is', error.toString())
+  const onError = error => console.log('error is', error.toString())
   const onLoadingStart = () => console.log('Loading Start at ' + Date.now())
   const onLoadingEnd = () => console.log('Loading End at ' + Date.now())
-  return asyncDataHandler(promise, codeFromRes, dataFromRes, onSuccess, onBusinessError, onHTTPError, onLoadingStart, onLoadingEnd).then(data => {
+  return asyncDataHandler(promise, codeFromRes, dataFromRes, onSuccess, onBusinessError, onError, onLoadingStart, onLoadingEnd).then(data => {
     expect(data.answer).toMatch(/yes|no/)
   })
 })
@@ -26,8 +26,8 @@ test('business reject', () => {
     isBusinessChecked = true
     console.warn('business reject')
   }
-  const onHTTPError = error => console.log('error is', error.toString())
-  return asyncDataHandler(promise, codeFromRes, () => {}, false, onBusinessError, onHTTPError).then(() => {
+  const onError = error => console.log('error is', error.toString())
+  return asyncDataHandler(promise, codeFromRes, () => {}, false, onBusinessError, onError).then(() => {
     expect(isBusinessChecked).toBeTruthy()
   })
 })
@@ -38,10 +38,10 @@ test('http reject', async () => {
   const onBusinessError = result => {
     console.warn('business reject')
   }
-  const onHTTPError = error => {
+  const onError = error => {
     isHttpChecked = true
     console.warn('http reject and error is', error.toString())
   }
-  await asyncDataHandler(promise, codeFromRes, () => {}, false, onBusinessError, onHTTPError)
+  await asyncDataHandler(promise, codeFromRes, () => {}, false, onBusinessError, onError)
   expect(isHttpChecked).toBeTruthy()
 })

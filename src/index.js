@@ -60,7 +60,7 @@ export const axiosResHandler = promise => promise.then(res => res.data).catch(er
  * @param {dataFromRes} dataFromRes - method which can get the bussiness data from the res
  * @param {onSuccess | false} onSuccess - callback when bussiness code is right
  * @param {onBusinessError | false} onBusinessError - callback when bussiness code is wrong (if all actions were done in the axios res interceptors, u can do nothing here)
- * @param {onHTTPError | false} onHTTPError - callback when http error or syntax error is catched (if all actions were done in the axios res interceptors, u can do nothing here)
+ * @param {onError | false} onError - callback when http error or syntax error is catched (if all actions were done in the axios res interceptors, u can do nothing here)
  * @param {Function} [onLoadingStart] - loading before asyncData
  * @param {Function} [onLoadingEnd] - loading after asyncData
  * @return {Promise}
@@ -71,7 +71,7 @@ export async function asyncDataHandler(
   dataFromRes,
   onSuccess,
   onBusinessError,
-  onHTTPError,
+  onError,
   onLoadingStart,
   onLoadingEnd,
 ) {
@@ -97,7 +97,7 @@ export async function asyncDataHandler(
     _.isFunction(onLoadingEnd) && onLoadingEnd()
     // http error catch or syntax error catch
     // maybe { code: number, msg: string } or new Error()
-    onHTTPError && _.isFunction(onHTTPError) && onHTTPError(e) 
+    onError && _.isFunction(onError) && onError(e) 
   }
   return Promise.resolve()
 }
@@ -139,7 +139,7 @@ export async function asyncDataHandler(
  */
 
 /**
- * @callback onHTTPError
+ * @callback onError
  * @param {Object | Error} e - error
  * @return {void}
  */
