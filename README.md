@@ -1,4 +1,6 @@
 # after-axios
+![npm (scoped)](https://img.shields.io/npm/v/@terryz95/after-axios)
+
 配置化处理axios后续的操作。
 
 axios可以帮助你：
