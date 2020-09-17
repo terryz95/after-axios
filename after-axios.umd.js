@@ -121,7 +121,7 @@
    * @param {dataFromRes} dataFromRes - method which can get the bussiness data from the res
    * @param {onSuccess | false} onSuccess - callback when bussiness code is right
    * @param {onBusinessError | false} onBusinessError - callback when bussiness code is wrong (if all actions were done in the axios res interceptors, u can do nothing here)
-   * @param {onHTTPError | false} onHTTPError - callback when http error or syntax error is catched (if all actions were done in the axios res interceptors, u can do nothing here)
+   * @param {onError | false} onError - callback when http error or syntax error is catched (if all actions were done in the axios res interceptors, u can do nothing here)
    * @param {Function} [onLoadingStart] - loading before asyncData
    * @param {Function} [onLoadingEnd] - loading after asyncData
    * @return {Promise}
@@ -132,7 +132,7 @@
     dataFromRes,
     onSuccess,
     onBusinessError,
-    onHTTPError,
+    onError,
     onLoadingStart,
     onLoadingEnd,
   ) {
@@ -157,7 +157,7 @@
       ___default['default'].isFunction(onLoadingEnd) && onLoadingEnd();
       // http error catch or syntax error catch
       // maybe { code: number, msg: string } or new Error()
-      onHTTPError && ___default['default'].isFunction(onHTTPError) && onHTTPError(e); 
+      onError && ___default['default'].isFunction(onError) && onError(e); 
     }
     return Promise.resolve()
   }
@@ -199,7 +199,7 @@
    */
 
   /**
-   * @callback onHTTPError
+   * @callback onError
    * @param {Object | Error} e - error
    * @return {void}
    */

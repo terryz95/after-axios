@@ -85,7 +85,7 @@
     const onBusinessError = result => {
       $result.innerHTML = '这里调用了业务层的callback，业务数据是: ' + JSON.stringify(result)
     }
-    const onHTTPError = error => {
+    const onError = error => {
       $result.innerHTML = '这里调用了HTTP层的callback，也有可能拦截到语法错误，当前错误是: ' + (error instanceof Error ? error.toString() : JSON.stringify(error))
     }
     const onLoadingStart = () => {
@@ -97,15 +97,15 @@
 
     document.querySelector('#request1').addEventListener('click', function() {
       const promise = axiosResHandler(request.get('https://yesno.wtf/api'))
-      asyncDataHandler(promise, successFromRes, dataFromRes, onSuccess, onBusinessError, onHTTPError, onLoadingStart, onLoadingEnd)
+      asyncDataHandler(promise, successFromRes, dataFromRes, onSuccess, onBusinessError, onError, onLoadingStart, onLoadingEnd)
     })
     document.querySelector('#request2').addEventListener('click', function() {
       const promise = axiosResHandler(request.get('https://yesno.wtf/api'))
-      asyncDataHandler(promise, failFromRes, dataFromRes, onSuccess, onBusinessError, onHTTPError, onLoadingStart, onLoadingEnd)
+      asyncDataHandler(promise, failFromRes, dataFromRes, onSuccess, onBusinessError, onError, onLoadingStart, onLoadingEnd)
     })
     document.querySelector('#request3').addEventListener('click', function() {
       const promise = axiosResHandler(request.get('https://yesno.wtf/api/error'))
-      asyncDataHandler(promise, successFromRes, dataFromRes, onSuccess, onBusinessError, onHTTPError, onLoadingStart, onLoadingEnd)
+      asyncDataHandler(promise, successFromRes, dataFromRes, onSuccess, onBusinessError, onError, onLoadingStart, onLoadingEnd)
     })
   </script>
 </body>
