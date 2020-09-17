@@ -1,6 +1,6 @@
 {
   "name": "@terryz95/after-axios",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "a series of handlers after the axios request",
   "main": "dist/after-axios.cjs.js",
   "module": "dist/after-axios.esm.js",
