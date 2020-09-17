@@ -1,5 +1,5 @@
 {
-  "name": "after-axios",
+  "name": "@terryz95/after-axios",
   "version": "1.0.0",
   "description": "a series of handlers after the axios request",
   "main": "dist/after-axios.cjs.js",
@@ -43,5 +43,8 @@
     "jest": "^26.4.2",
     "rimraf": "^3.0.2",
     "rollup": "^2.26.11"
+  },
+  "directories": {
+    "example": "examples"
   }
 }
