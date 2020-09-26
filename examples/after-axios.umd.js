@@ -152,14 +152,15 @@
       } else {
         // business error: it means http res status code is ok but business check is not passed
         onBusinessError && ___default['default'].isFunction(onBusinessError) && onBusinessError(result);
+        return Promise.reject({ error: result, type: 'business' })
       }
     } catch (e) {
       ___default['default'].isFunction(onLoadingEnd) && onLoadingEnd();
       // http error catch or syntax error catch
       // maybe { code: number, msg: string } or new Error()
       onError && ___default['default'].isFunction(onError) && onError(e); 
+      return Promise.resolve({ error: e, type: e instanceof Error ? 'syntax' : 'http' })
     }
-    return Promise.resolve()
   }
 
   /**
